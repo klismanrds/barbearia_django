@@ -8,9 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-voi5l07=k4ltg5+^_wo93jx*7fbmd-^6^rg(mlprxyzg(i)x7s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["ze.localhost", "alfa.localhost"]
 
 # 1. APPS Comuns e de Tenant
 SHARED_APPS = [
