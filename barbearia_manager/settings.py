@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,7 +11,43 @@ SECRET_KEY = 'django-insecure-voi5l07=k4ltg5+^_wo93jx*7fbmd-^6^rg(mlprxyzg(i)x7s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["ze.localhost", "alfa.localhost"]
+LOCAL = os.environ.get('LOCAL', 'True') == 'True' 
+
+if LOCAL:
+    DEBUG = True
+    # O ALLOWED_HOSTS é ignorado quando DEBUG é True
+    ALLOWED_HOSTS = ['*'] 
+else:
+    # Configurações de PRODUÇÃO
+    DEBUG = False
+    
+    # Adiciona o domínio do Railway (e o seu customizado, se houver)
+    ALLOWED_HOSTS = [
+        '.railway.app', # Para o subdomínio gerado
+        '127.0.0.1', 
+        'localhost',
+        "ze.localhost",
+         "alfa.localhost",
+        # 'seumaiordomínio.com' # Se estiver usando um domínio próprio
+    ]
+# ----------------------------------------------------
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if not LOCAL and DATABASE_URL:
+    # Configuração de PRODUÇÃO: Usa a URL do Railway
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+    }
+else:
+    # Configuração de DESENVOLVIMENTO: Usa o SQLite ou PostgreSQL local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3', # Ou 'django.db.backends.postgresql'
+            'NAME': BASE_DIR / 'db.sqlite3',
+            # ... suas outras configurações locais
+        }
+    }
+# ----------------------------------------------------
 
 # 1. APPS Comuns e de Tenant
 SHARED_APPS = [
