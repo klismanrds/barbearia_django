@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if form.instance.pk %}Editar Serviço{% else %}Novo Serviço{% endif %} - {{ user.perfil_barbeiro.barbearia.name|default:'Manager' }}
+{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        background-attachment: fixed;
+        font-family: 'Poppins', sans-serif;
+        color: #fff;
+    }
+    .card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+    .card-header {
+        background-color: #0d6efd;
+        color: white;
+        font-weight: 600;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+    }
+    .card-body {
+        color: #212529; /* Para garantir que o texto do formulário seja visível no fundo branco/claro do card */
+    }
+    h2 {
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+    .btn-success {
+        background-color: #198754;
+        border-color: #198754;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    /* Estilo para garantir que o checkbox se integre bem com o crispy forms e o estilo geral */
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 800px;">
+        <div class="card-header">
+            <h2 class="mb-0">
+                <i class="bi bi-gear me-2"></i>
+                {% if form.instance.pk %}Editar Serviço: {{ form.instance.nome }}{% else %}Novo Serviço{% endif %}
+            </h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                {# Nome do Serviço #}
+                {{ form.nome|as_crispy_field }}
+
+                <div class="row">
+                    {# Preço #}
+                    <div class="col-md-6">
+                        {{ form.preco|as_crispy_field }}
+                    </div>
+                    
+                    {# Duração #}
+                    <div class="col-md-6">
+                        {{ form.duracao_minutos|as_crispy_field }}
+                    </div>
+                </div>
+
+                {# Descrição #}
+                {{ form.descricao|as_crispy_field }}
+
+                {# Serviço Ativo (Checkbox/Switch) #}
+                {{ form.ativo|as_crispy_field }}
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                        <i class="bi bi-save me-1"></i> Salvar Serviço
+                    </button>
+                    <a href="{% url 'servicos:lista_servicos' %}" class="btn btn-secondary btn-lg shadow-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

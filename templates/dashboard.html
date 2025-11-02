@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Dashboard | {{ user.perfil_barbeiro.barbearia.name|default:'Manager' }}{% endblock %}
+{% block content %}
+
+<style>
+    :root {
+        --card1-color: #00c6ff; /* Azul claro */
+        --card2-color: #92fe9d; /* Verde claro */
+        --card3-color: #9c27b0; /* Roxo */
+        --card4-color: #ff00ea; /* Magenta */
+    }
+
+    body {
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        background-attachment: fixed;
+        font-family: 'Poppins', sans-serif;
+        color: #fff;
+        overflow-x: hidden;
+        /* Adicionando um toque de animação e brilho no fundo */
+        background-size: 400% 400%;
+        animation: gradientBackground 15s ease infinite;
+    }
+
+    /* Animação de fundo para um efeito mais criativo */
+    @keyframes gradientBackground {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .dashboard-container {
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ======== CARDS PRINCIPAIS ======== */
+    .card {
+        border: none;
+        border-radius: 1.25rem; /* Um pouco mais arredondado */
+        backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transição mais suave */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .card:hover {
+        transform: translateY(-8px) scale(1.02); /* Efeito de elevação e leve aumento */
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Estilos específicos para cada card principal com cores vibrantes */
+    .card.card-agendamentos {
+        background: linear-gradient(45deg, var(--card1-color), #4CAF50); /* Azul para Verde */
+        border: 2px solid var(--card1-color);
+    }
+    .card.card-faturamento {
+        background: linear-gradient(45deg, var(--card2-color), #2196F3); /* Verde para Azul */
+        border: 2px solid var(--card2-color);
+    }
+    .card.card-clientes {
+        background: linear-gradient(45deg, var(--card3-color), #00bcd4); /* Roxo para Ciano */
+        border: 2px solid var(--card3-color);
+    }
+    .card.card-barbeiros {
+        background: linear-gradient(45deg, var(--card4-color), #FF5722); /* Magenta para Laranja */
+        border: 2px solid var(--card4-color);
+    }
+
+    /* ======== LISTAS DE AGENDAMENTOS E RANKING ======== */
+    .list-group-item {
+        background-color: rgba(255, 255, 255, 0.1); /* Fundo sutil */
+        border-color: rgba(255, 255, 255, 0.2); /* Borda mais suave */
+        color: white;
+        margin-bottom: 0.5rem;
+        border-radius: 0.75rem;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .list-group-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateX(5px);
+    }
+
+    /* Badges dentro das listas */
+    .list-group-item .badge {
+        font-weight: 600;
+        padding: 0.4em 0.7em;
+        border-radius: 0.5rem;
+    }
+    .list-group-item .badge.bg-info { /* Horário */
+        background-color: #0dcaf0 !important;
+        color: #212529 !important;
+    }
+    .list-group-item .badge.bg-secondary { /* Status */
+        background-color: #6c757d !important;
+    }
+    .list-group-item .badge.bg-success { /* Nome do Barbeiro */
+        background-color: #198754 !important;
+    }
+
+    /* Ranking Card */
+    .ranking-card {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+    }
+    .ranking-card .list-group-item {
+        background-color: rgba(255, 255, 255, 0.08); /* Fundo um pouco mais escuro para o ranking */
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+    .ranking-card .list-group-item:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+    .ranking-card .badge.bg-primary {
+        background-color: #0d6efd !important;
+        color: white;
+    }
+    .ranking-card .text-muted {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    /* Títulos das Seções */
+    h1, h4 {
+        font-weight: 700;
+        color: white;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    h5 {
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* ======== ALERTAS ======== */
+    .alert-info {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: #fff;
+        font-weight: 500;
+        border-radius: 0.75rem;
+    }
+
+    /* Ícones */
+    .fs-2 {
+        font-size: 2.5rem !important; /* Ícones um pouco maiores */
+    }
+    .bi {
+        vertical-align: middle;
+    }
+</style>
+
+<div class="container dashboard-container mt-4">
+    <h1 class="mb-4"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h1>
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card card-agendamentos shadow text-center p-3">
+                <i class="bi bi-calendar-event fs-2 mb-2"></i>
+                <h5 class="card-title">Agendamentos Hoje</h5>
+                <p class="fs-2 fw-bold">{{ agendamentos_hoje_count }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-faturamento shadow text-center p-3">
+                <i class="bi bi-currency-dollar fs-2 mb-2"></i>
+                <h5 class="card-title">Faturamento Hoje</h5>
+                <p class="fs-2 fw-bold">R$ {{ faturamento_hoje|floatformat:2|intcomma }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-clientes shadow text-center p-3">
+                <i class="bi bi-people fs-2 mb-2"></i>
+                <h5 class="card-title">Total de Clientes</h5>
+                <p class="fs-2 fw-bold">{{ total_clientes }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-barbeiros shadow text-center p-3">
+                <i class="bi bi-person-workspace fs-2 mb-2"></i>
+                <h5 class="card-title">Barbeiros Ativos</h5>
+                <p class="fs-2 fw-bold">{{ barbeiros_ativos }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-7">
+            <h4 class="mb-3"><i class="bi bi-calendar-check me-2"></i>Próximos Agendamentos</h4>
+            {% if agendamentos_hoje_list %}
+            <ul class="list-group shadow">
+                {% for ag in agendamentos_hoje_list %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-info text-dark me-2">
+                            {{ ag.data_hora_inicio|date:"H:i" }}{% if ag.data_hora_fim %} - {{ ag.data_hora_fim|date:"H:i" }}{% endif %}
+                        </span>
+                        <strong>{{ ag.servico.nome }}</strong> com {{ ag.cliente.nome }}
+                    </div>
+                    <div class="d-flex align-items-center">
+                            <span class="badge bg-secondary rounded-pill me-2">
+                                {{ ag.get_status_display }}
+                            </span>
+                            <span class="badge bg-success rounded-pill">
+                                {{ ag.barbeiro.usuario.first_name }}
+                            </span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="alert alert-info">Nenhum agendamento para hoje.</p>
+            {% endif %}
+        </div>
+
+        <div class="col-md-5">
+            <h4 class="mb-3"><i class="bi bi-graph-up me-2"></i>Ranking de Faturamento (Hoje)</h4>
+            <div class="card ranking-card p-3">
+                <div class="card-body p-0">
+                        {% if lista_barbeiros_com_ganhos %}
+                            <ul class="list-group list-group-flush">
+                                {% for rank in lista_barbeiros_com_ganhos %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-primary me-2">{{ forloop.counter }}º</span>
+                                        {{ rank.barbeiro__usuario__first_name }}
+                                        <span class="badge bg-primary rounded-pill">R$ {{ rank.ganho_total|floatformat:2 }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted text-center">Nenhum dado de Barbeiro para ranking ainda.</p>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

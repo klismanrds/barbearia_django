@@ -1,0 +1,97 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient shadow-sm fixed-top">
+    <div class="container-fluid px-4">
+        <!-- Marca -->
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'dashboard' %}">
+            <i class="bi bi-scissors me-2" style="font-size: 1.4rem;"></i>
+            <span class="fw-semibold">Barbearia Manager</span>
+        </a>
+
+        <!-- Botão responsivo -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'clientes:lista_clientes' %}"> 
+                        <i class="bi bi-person-lines-fill me-1"></i> Clientes
+                    </a>
+                </li>                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'barbeiros:lista_barbeiros' %}">
+                        <i class="bi bi-person-workspace me-1"></i> Barbeiros
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'agendamentos:lista_agendamentos' %}">
+                        <i class="bi bi-calendar-check me-1"></i> Agendamentos
+                    </a>
+                </li>                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'servicos:lista_servicos' %}">
+                        <i class="bi bi-calendar-check me-1"></i> Serviços
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+
+            <!-- Área do usuário -->
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav align-items-center">
+                <li class="nav-item me-3 d-flex align-items-center">
+                    <div class="avatar bg-light text-dark fw-semibold rounded-circle me-2 d-flex align-items-center justify-content-center" 
+                         style="width: 32px; height: 32px; font-size: 0.9rem;">
+                        {{ user.first_name|default:user.username|slice:":1"|upper }}
+                    </div>
+                    <span class="text-white small">
+                        {{ user.first_name|default:user.username }}
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-light btn-sm px-3" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-right me-1"></i> Sair
+                    </a>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<style>
+    .bg-gradient {
+        background: linear-gradient(135deg, #212529, #0d6efd);
+    }
+
+    .navbar {
+        backdrop-filter: blur(8px);
+    }
+
+    .navbar .nav-link {
+        color: #e4e4e4 !important;
+        font-weight: 500;
+        transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .navbar .nav-link:hover {
+        color: #ffffff !important;
+        transform: translateY(-1px);
+    }
+
+    .avatar {
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .btn-outline-light:hover {
+        background-color: #fff !important;
+        color: #0d6efd !important;
+        border-color: #fff !important;
+    }
+
+    /* Ajuste para evitar sobreposição do conteúdo */
+    body {
+        padding-top: 70px;
+    }
+</style>

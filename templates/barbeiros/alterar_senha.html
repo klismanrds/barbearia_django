@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}Editar Barbeiro{% else %}Novo Barbeiro{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        background-attachment: fixed;
+        font-family: 'Poppins', sans-serif;
+        color: #fff;
+    }
+
+    .dashboard-container {
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+        border: none;
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    label {
+        font-weight: 500;
+        color: #fff;
+    }
+
+    input, select, textarea {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 0.5rem;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .form-check-label {
+        color: #fff;
+        font-weight: 500;
+    }
+
+    .btn {
+        border-radius: 0.75rem;
+        padding: 10px 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
+
+    .alert-danger {
+        background-color: rgba(255, 0, 0, 0.15);
+        border: none;
+        color: #fff;
+    }
+
+    small.text-danger {
+        color: #ffb3b3 !important;
+        font-weight: 500;
+    }
+</style>
+
+<div class="container-fluid dashboard-container mt-4">
+    <h1 class="mb-4">
+        <i class="bi bi-scissors me-2"></i>
+        {% if form.instance.pk %}Editar Barbeiro{% else %}Novo Barbeiro{% endif %}
+    </h1>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg bg-transparent border-0" style="backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.1);">
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        {% if not form.instance.pk %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.username.id_for_label }}">Nome de Usuário (Login):</label>
+                                {{ form.username }}
+                                {% if form.username.errors %}<small class="text-danger">{{ form.username.errors }}</small>{% endif %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.password.id_for_label }}">Senha:</label>
+                                {{ form.password }}
+                                {% if form.password.errors %}<small class="text-danger">{{ form.password.errors }}</small>{% endif %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.password_confirm.id_for_label }}">Confirmar Senha:</label>
+                                {{ form.password_confirm }}
+                                {% if form.password_confirm.errors %}<small class="text-danger">{{ form.password_confirm.errors }}</small>{% endif %}
+                            </div>
+                        </div>
+                        <hr class="text-light">
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.comissao_percentual.id_for_label }}">Comissão (%):</label>
+                                {{ form.comissao_percentual }}
+                                {% if form.comissao_percentual.errors %}<small class="text-danger">{{ form.comissao_percentual.errors }}</small>{% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.telefone.id_for_label }}">Telefone:</label>
+                                {{ form.telefone }}
+                                {% if form.telefone.errors %}<small class="text-danger">{{ form.telefone.errors }}</small>{% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-check-label d-flex align-items-center" for="{{ form.ativo.id_for_label }}">
+                                <span class="me-3">Barbeiro Ativo (pode receber agendamentos)</span>
+                                <label class="switch mb-0">
+                                    {{ form.ativo }}
+                                    <span class="slider round"></span>
+                                </label>
+                            </label>
+                            {% if form.ativo.errors %}
+                                <small class="text-danger">{{ form.ativo.errors }}</small>
+                            {% endif %}
+                        </div>
+
+                        <style>
+                            .switch input {
+                                opacity: 0;
+                                width: 0;
+                                height: 0;
+                            }
+                            .switch {
+                                position: relative;
+                                display: inline-block;
+                                width: 50px;
+                                height: 26px;
+                            }
+                            .slider {
+                                position: absolute;
+                                cursor: pointer;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                background-color: rgba(255, 255, 255, 0.3);
+                                transition: 0.4s;
+                                border-radius: 34px;
+                            }
+                            .slider:before {
+                                position: absolute;
+                                content: "";
+                                height: 20px;
+                                width: 20px;
+                                left: 4px;
+                                bottom: 3px;
+                                background-color: white;
+                                transition: 0.4s;
+                                border-radius: 50%;
+                            }
+                            input:checked + .slider {
+                                background-color: #00c851;
+                            }
+                            input:focus + .slider {
+                                box-shadow: 0 0 1px #00c851;
+                            }
+                            input:checked + .slider:before {
+                                transform: translateX(24px);
+                            }
+                            .slider.round {
+                                border-radius: 34px;
+                            }
+                        </style>   
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bi bi-save me-1"></i>Salvar
+                            </button>
+                            <a href="{% url 'barbeiros:lista_barbeiros' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

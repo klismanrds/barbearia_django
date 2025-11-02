@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if form.instance.pk %}Editar Barbeiro{% else %}Novo Barbeiro{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        background-attachment: fixed;
+        font-family: 'Poppins', sans-serif;
+        color: #fff;
+    }
+    .card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+    .card-header {
+        background-color: #0d6efd;
+        color: white;
+        font-weight: 600;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+    }
+    .card-body {
+        color: #212529;
+    }
+    h2 {
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+
+    /* Estilos do Switch/Toggle (Barbeiro Ativo) */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 4px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #00c851;
+    }
+    input:checked + .slider:before {
+        transform: translateX(24px);
+    }
+    .slider.round {
+        border-radius: 34px;
+    }
+    .form-check-label-custom {
+        color: #212529;
+        font-weight: 500;
+        margin-bottom: 0;
+    }
+
+    /* Estilos de Botões e Alertas */
+    .btn-success.btn-lg {
+        background-color: #198754;
+        border-color: #198754;
+    }
+    .btn-secondary.btn-lg {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+    .alert-danger {
+        color: #842029;
+        background-color: #f8d7da;
+        border-color: #f5c2c7;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 800px;">
+        <div class="card-header">
+            <h2 class="mb-0">
+                {% if form.instance.pk %}<i class="bi bi-pencil-square me-2"></i>Editar Barbeiro{% else %}<i class="bi bi-scissors me-2"></i>Novo Barbeiro{% endif %}
+            </h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                {% if not form.instance.pk %}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form.username|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.password|as_crispy_field }}
+                    </div>
+                </div>
+                <hr class="my-4">
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form.comissao_percentual|as_crispy_field }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.telefone|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="form-group mb-4 d-flex align-items-center mt-3">
+                    <label class="form-check-label-custom d-flex align-items-center" for="{{ form.ativo.id_for_label }}">
+                        <span class="me-3">Barbeiro Ativo (pode receber agendamentos)</span>
+                        <label class="switch mb-0">
+                            {{ form.ativo }}
+                            <span class="slider round"></span>
+                        </label>
+                    </label>
+                    {% if form.ativo.errors %}
+                        <small class="text-danger ms-3">{{ form.ativo.errors }}</small>
+                    {% endif %}
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                        <i class="bi bi-save me-1"></i> Salvar Barbeiro
+                    </button>
+                    <a href="{% url 'barbeiros:lista_barbeiros' %}" class="btn btn-secondary btn-lg shadow-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

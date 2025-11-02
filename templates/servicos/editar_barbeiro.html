@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-white mb-4">
+    ✂️ Editar Perfil do Barbeiro
+  </h2>
+
+  <div class="card shadow-lg p-4 rounded-4" style="background: linear-gradient(145deg, #0d6efd, #007bff); color: white;">
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="{{ form.telefone.id_for_label }}">Telefone:</label>
+          {{ form.telefone }}
+          {% if form.telefone.errors %}
+          <small class="text-warning">{{ form.telefone.errors }}</small>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          <label for="{{ form.comissao_percentual.id_for_label }}">Comissão (%):</label>
+          {{ form.comissao_percentual }}
+          {% if form.comissao_percentual.errors %}
+          <small class="text-warning">{{ form.comissao_percentual.errors }}</small>
+          {% endif %}
+        </div>
+      </div>
+
+      <hr class="border-light my-4">
+
+      <h5 class="text-light mb-3">Alterar Senha</h5>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="{{ form.nova_senha.id_for_label }}">Nova Senha:</label>
+          {{ form.nova_senha }}
+          {% if form.nova_senha.errors %}
+          <small class="text-warning">{{ form.nova_senha.errors }}</small>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6">
+          <label for="{{ form.confirmar_senha.id_for_label }}">Confirmar Nova Senha:</label>
+          {{ form.confirmar_senha }}
+          {% if form.confirmar_senha.errors %}
+          <small class="text-warning">{{ form.confirmar_senha.errors }}</small>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-check form-switch mb-4">
+        {{ form.ativo }}
+        <label class="form-check-label ms-2" for="{{ form.ativo.id_for_label }}">
+          Barbeiro Ativo (pode receber agendamentos)
+        </label>
+      </div>
+
+      <div class="d-flex justify-content-end mt-4">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary me-2">
+          <i class="fas fa-times-circle"></i> Cancelar
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
